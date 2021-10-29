@@ -2,48 +2,45 @@ package es.ivan.cifrador.utils;
 
 public class Caesar {
 
-    public String encrypt(String text, int offSet) {
-        final StringBuilder cifrado = new StringBuilder();
+    private final String alphabet = "abcdefghijklmnñopqrstuvwxyz";
 
-        offSet = offSet % 26;
+    public String encrypt(String text, int moves) {
+        final StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) >= 'a' && text.charAt(i) <= 'z') {
-                if ((text.charAt(i) + offSet) > 'z') {
-                    cifrado.append((char) (text.charAt(i) + offSet - 26));
-                } else {
-                    cifrado.append((char) (text.charAt(i) + offSet));
-                }
-            } else if (text.charAt(i) >= 'A' && text.charAt(i) <= 'Z') {
-                if ((text.charAt(i) + offSet) > 'Z') {
-                    cifrado.append((char) (text.charAt(i) + offSet - 26));
-                } else {
-                    cifrado.append((char) (text.charAt(i) + offSet));
-                }
+        for (char c : text.toCharArray()) {
+            final boolean isUpper = Character.isUpperCase(c);
+            c = Character.toLowerCase(c);
+            final int index = this.alphabet.indexOf(c);
+            char newLetter;
+
+            if (index + moves >= this.alphabet.length()) {
+                final int offSet = -this.alphabet.length() + (index + moves);
+                newLetter = this.alphabet.charAt(offSet);
+            } else {
+                newLetter = this.alphabet.charAt(index + moves);
             }
+            sb.append(isUpper ? Character.toUpperCase(newLetter) : newLetter);
         }
-        return cifrado.toString();
+        return sb.toString();
     }
 
-    public String decrypt(String text, int offSet) {
-        final StringBuilder cifrado = new StringBuilder();
+    public String decrypt(String text, int moves) {
+        final StringBuilder sb = new StringBuilder();
 
-        offSet = offSet % 26;
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) >= 'a' && text.charAt(i) <= 'z') {
-                if ((text.charAt(i) - offSet) < 'a') {
-                    cifrado.append((char) (text.charAt(i) - offSet + 26));
-                } else {
-                    cifrado.append((char) (text.charAt(i) - offSet));
-                }
-            } else if (text.charAt(i) >= 'A' && text.charAt(i) <= 'Z') {
-                if ((text.charAt(i) - offSet) < 'A') {
-                    cifrado.append((char) (text.charAt(i) - offSet + 26));
-                } else {
-                    cifrado.append((char) (text.charAt(i) - offSet));
-                }
+        for (char c : text.toCharArray()) {
+            final boolean isUpper = Character.isUpperCase(c);
+            c = Character.toLowerCase(c);
+            final int index = this.alphabet.indexOf(c);
+            char newLetter;
+
+            if (index - moves < 0) {
+                final int offSet = this.alphabet.length() + (index - moves);
+                newLetter = this.alphabet.charAt(offSet);
+            } else {
+                newLetter = this.alphabet.charAt(index - moves);
             }
+            sb.append(isUpper ? Character.toUpperCase(newLetter) : newLetter);
         }
-        return cifrado.toString();
+        return sb.toString();
     }
 }
