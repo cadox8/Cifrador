@@ -4,6 +4,13 @@ public class Caesar {
 
     private final String alphabet = "abcdefghijklmnñopqrstuvwxyz";
 
+    /**
+     *
+     *
+     * @param text
+     * @param moves
+     * @return
+     */
     public String encrypt(String text, int moves) {
         final StringBuilder sb = new StringBuilder();
 
@@ -24,6 +31,13 @@ public class Caesar {
         return sb.toString();
     }
 
+    /**
+     *
+     *
+     * @param text
+     * @param moves
+     * @return
+     */
     public String decrypt(String text, int moves) {
         final StringBuilder sb = new StringBuilder();
 

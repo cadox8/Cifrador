@@ -36,11 +36,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        final int buttonWidth = metrics.widthPixels / 6;
-        final int buttonHeight = buttonWidth;
+        final int buttonSize = metrics.widthPixels / 6;
 
-        final int xPos = buttonWidth / 2;
-        final int yPos = (buttonHeight * 2) - (buttonHeight / 4);
+        final int xPos = buttonSize / 2;
+        final int yPos = (buttonSize * 2) - (buttonSize / 4);
 
         int columns = 0;
         int rows = 0;
@@ -66,10 +65,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             layout.addView(button);
 
-            set.setTranslationX(button.getId(), xPos + (columns * buttonWidth + 5));
-            set.setTranslationY(button.getId(), yPos + (rows * buttonHeight + 5));
-            set.constrainHeight(button.getId(), buttonHeight);
-            set.constrainWidth(button.getId(), buttonWidth);
+            set.setTranslationX(button.getId(), xPos + (columns * buttonSize + 5));
+            set.setTranslationY(button.getId(), yPos + (rows * buttonSize + 5));
+            set.constrainHeight(button.getId(), buttonSize);
+            set.constrainWidth(button.getId(), buttonSize);
             set.applyTo(layout);
 
             columns++;
@@ -90,10 +89,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.addView(mayus);
 
-        set.setTranslationX(mayus.getId(), xPos + (4 * buttonWidth + 5));
-        set.setTranslationY(mayus.getId(), yPos + (5 * buttonHeight + 5));
-        set.constrainHeight(mayus.getId(), buttonHeight);
-        set.constrainWidth(mayus.getId(), buttonWidth);
+        set.setTranslationX(mayus.getId(), xPos + (4 * buttonSize + 5));
+        set.setTranslationY(mayus.getId(), yPos + (5 * buttonSize + 5));
+        set.constrainHeight(mayus.getId(), buttonSize);
+        set.constrainWidth(mayus.getId(), buttonSize);
         set.applyTo(layout);
 
         // Delete
@@ -106,10 +105,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.addView(remove);
 
-        set.setTranslationX(remove.getId(), xPos + (3 * buttonWidth + 5));
-        set.setTranslationY(remove.getId(), yPos + (5 * buttonHeight + 5));
-        set.constrainHeight(remove.getId(), buttonHeight);
-        set.constrainWidth(remove.getId(), buttonWidth);
+        set.setTranslationX(remove.getId(), xPos + (3 * buttonSize + 5));
+        set.setTranslationY(remove.getId(), yPos + (5 * buttonSize + 5));
+        set.constrainHeight(remove.getId(), buttonSize);
+        set.constrainWidth(remove.getId(), buttonSize);
         set.applyTo(layout);
 
         // Encrypt
@@ -121,10 +120,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.addView(encrypt);
 
-        set.setTranslationX(encrypt.getId(), xPos + (buttonWidth + 5));
-        set.setTranslationY(encrypt.getId(), metrics.heightPixels - (buttonHeight * 2 - 5));
-        set.constrainHeight(encrypt.getId(), buttonHeight);
-        set.constrainWidth(encrypt.getId(), buttonWidth + 50);
+        set.setTranslationX(encrypt.getId(), xPos + 5);
+        set.setTranslationY(encrypt.getId(), metrics.heightPixels - (buttonSize * 2 - 5));
+        set.constrainHeight(encrypt.getId(), buttonSize);
+        set.constrainWidth(encrypt.getId(), buttonSize * 2);
         set.applyTo(layout);
 
         // Decrypt
@@ -136,10 +135,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.addView(decrypt);
 
-        set.setTranslationX(decrypt.getId(), xPos + (3 * buttonWidth + 5));
-        set.setTranslationY(decrypt.getId(), metrics.heightPixels - (buttonHeight * 2 - 5));
-        set.constrainHeight(decrypt.getId(), buttonHeight);
-        set.constrainWidth(decrypt.getId(), buttonWidth + 50);
+        set.setTranslationX(decrypt.getId(), xPos + (3 * buttonSize + 5));
+        set.setTranslationY(decrypt.getId(), metrics.heightPixels - (buttonSize * 2 - 5));
+        set.constrainHeight(decrypt.getId(), buttonSize);
+        set.constrainWidth(decrypt.getId(), buttonSize * 2);
         set.applyTo(layout);
     }
 
