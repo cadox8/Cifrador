@@ -20,7 +20,7 @@ import es.ivan.cifrador.utils.Caesar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
-    private final String letters = " abcdefghijklmnñopqrstuvwxyz";
+    private String letters = "abcdefghijklmnñopqrstuvwxyz";
     private boolean mayus = false;
     private boolean longClick = false;
 
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final int buttonHeight = buttonWidth;
 
         final int xPos = buttonWidth / 2;
-        final int yPos = 300;
+        final int yPos = (buttonHeight * 2) - (buttonHeight / 4);
 
         int columns = 0;
         int rows = 0;
@@ -55,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // [A]
         // [B] [C] [D] ...
         //
-        for (int i = 1; i < this.letters.length(); i++) {
+        final boolean newAPI = letters.split("")[1].equalsIgnoreCase("b");
+        for (int i = newAPI ? 0 : 1; i <= (newAPI ? this.letters.length() - 1 : this.letters.length()); i++) {
             final Button button = new Button(this);
             button.setText(letters.split("")[i]);
             button.setId(i);
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             set.applyTo(layout);
 
             columns++;
-            if (i % 5 == 0) {
+            if ((newAPI ? i + 1 : i) % 5 == 0 && i != 0) {
                 rows++;
                 columns = 0;
             }
@@ -152,6 +153,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     v.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
                 }
                 this.mayus = !this.mayus;
+                if (this.mayus) {
+                    v.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                } else {
+                    v.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
+                }
                 this.updateLetterButton();
                 break;
             case 31:
@@ -177,10 +183,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (this.mayus) letter = letter.toUpperCase();
                 text.setText(text.getText() + letter);
 
-                if (!this.longClick) {
+/*                if (!this.longClick) {
                     this.mayus = false;
                     this.updateLetterButton();
-                }
+                }*/
                 break;
         }
     }
@@ -195,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateLetterButton() {
-        for (int i = 1; i < this.letters.length(); i++) {
+        for (int i = 0; i <= this.letters.length(); i++) {
             final Button button = findViewById(i);
             button.setAllCaps(this.mayus);
         }
