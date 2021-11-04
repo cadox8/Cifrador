@@ -2,25 +2,38 @@ package es.ivan.cifrador;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Surface;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 
 import es.ivan.cifrador.utils.Caesar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
-    private String letters = "abcdefghijklmnñopqrstuvwxyz";
+    private final String letters = "abcdefghijklmnñopqrstuvwxyz";
     private boolean mayus = false;
     private boolean longClick = false;
 
@@ -29,10 +42,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.createLayout();
+        final int orientation = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+
+        if (orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
+            this.rotationLayout();
+        } else {
+            this.normalLayout();
+        }
     }
 
-    private void createLayout() {
+    private void normalLayout() {
         final DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
@@ -204,5 +223,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             final Button button = findViewById(i);
             button.setAllCaps(this.mayus);
         }
+    }
+
+    private void rotationLayout() {
+
     }
 }
