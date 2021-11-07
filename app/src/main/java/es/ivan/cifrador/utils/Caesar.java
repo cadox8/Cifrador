@@ -15,6 +15,10 @@ public class Caesar {
         final StringBuilder sb = new StringBuilder();
 
         for (char c : text.toCharArray()) {
+            if (c == ' ') {
+                sb.append(' ');
+                continue;
+            }
             final boolean isUpper = Character.isUpperCase(c);
             c = Character.toLowerCase(c);
             final int index = this.alphabet.indexOf(c);
@@ -42,6 +46,10 @@ public class Caesar {
         final StringBuilder sb = new StringBuilder();
 
         for (char c : text.toCharArray()) {
+            if (c == ' ') {
+                sb.append(' ');
+                continue;
+            }
             final boolean isUpper = Character.isUpperCase(c);
             c = Character.toLowerCase(c);
             final int index = this.alphabet.indexOf(c);

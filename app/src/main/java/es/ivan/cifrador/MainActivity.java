@@ -2,31 +2,20 @@ package es.ivan.cifrador;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Arrays;
 
 import es.ivan.cifrador.utils.Caesar;
@@ -36,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final String letters = "abcdefghijklmnñopqrstuvwxyz";
     private boolean mayus = false;
     private boolean longClick = false;
+    private final Caesar caesar = new Caesar();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +87,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+        // Space
+        final ImageButton space = new ImageButton(this);
+        space.setImageResource(R.drawable.spacebar);
+        space.setId(Integer.valueOf(34));
+        space.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        space.setOnClickListener(this);
+        space.setOnLongClickListener(this);
+
+        layout.addView(space);
+
+        set.setTranslationX(space.getId(), xPos + (columns++ * buttonSize + 5));
+        set.setTranslationY(space.getId(), yPos + (rows * buttonSize + 5));
+        set.constrainHeight(space.getId(), buttonSize);
+        set.constrainWidth(space.getId(), buttonSize);
+        set.applyTo(layout);
+
         // Mayus
         final ImageButton mayus = new ImageButton(this);
         mayus.setImageResource(R.drawable.mayus);
@@ -108,8 +115,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.addView(mayus);
 
-        set.setTranslationX(mayus.getId(), xPos + (4 * buttonSize + 5));
-        set.setTranslationY(mayus.getId(), yPos + (5 * buttonSize + 5));
+        set.setTranslationX(mayus.getId(), xPos + (columns++ * buttonSize + 5));
+        set.setTranslationY(mayus.getId(), yPos + (rows * buttonSize + 5));
         set.constrainHeight(mayus.getId(), buttonSize);
         set.constrainWidth(mayus.getId(), buttonSize);
         set.applyTo(layout);
@@ -124,8 +131,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.addView(remove);
 
-        set.setTranslationX(remove.getId(), xPos + (3 * buttonSize + 5));
-        set.setTranslationY(remove.getId(), yPos + (5 * buttonSize + 5));
+        set.setTranslationX(remove.getId(), xPos + (columns * buttonSize + 5));
+        set.setTranslationY(remove.getId(), yPos + (rows * buttonSize + 5));
         set.constrainHeight(remove.getId(), buttonSize);
         set.constrainWidth(remove.getId(), buttonSize);
         set.applyTo(layout);
@@ -163,7 +170,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        final Caesar caesar = new Caesar();
+        final TextView noCifrado = findViewById(R.id.noCifrado);
+        final TextView cifrado = findViewById(R.id.cifrado);
+
         switch (v.getId()) {
             case 30:
                 if (this.longClick) {
@@ -179,32 +188,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.updateLetterButton();
                 break;
             case 31:
-                final TextView noCifrado = findViewById(R.id.noCifrado);
-                final TextView cifrado = findViewById(R.id.cifrado);
-
-                cifrado.setText(caesar.encrypt((String) noCifrado.getText(), 4));
+                cifrado.setText(this.caesar.encrypt((String) noCifrado.getText(), 4));
                 break;
             case 32:
-                final TextView noCifrado2 = findViewById(R.id.noCifrado);
-                final TextView cifrado2 = findViewById(R.id.cifrado);
-
-                cifrado2.setText(caesar.decrypt((String) noCifrado2.getText(), 4));
+                cifrado.setText(this.caesar.decrypt((String) noCifrado.getText(), 4));
                 break;
             case 33:
-                final TextView noCi = findViewById(R.id.noCifrado);
-                if (noCi.getText().toString().toCharArray().length <= 0) break;
-                noCi.setText(String.valueOf(Arrays.copyOf(noCi.getText().toString().toCharArray(), noCi.getText().toString().toCharArray().length - 1)));
+                if (noCifrado.getText().toString().toCharArray().length <= 0) break;
+                noCifrado.setText(String.valueOf(Arrays.copyOf(noCifrado.getText().toString().toCharArray(), noCifrado.getText().toString().toCharArray().length - 1)));
+                break;
+            case 34:
+                noCifrado.setText(noCifrado.getText() + " ");
                 break;
             default:
-                final TextView text = findViewById(R.id.noCifrado);
                 String letter = letters.split("")[v.getId()];
                 if (this.mayus) letter = letter.toUpperCase();
-                text.setText(text.getText() + letter);
-
-/*                if (!this.longClick) {
-                    this.mayus = false;
-                    this.updateLetterButton();
-                }*/
+                noCifrado.setText(noCifrado.getText() + letter);
                 break;
         }
     }
@@ -219,13 +218,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateLetterButton() {
-        for (int i = 0; i <= this.letters.length(); i++) {
+        final boolean newAPI = letters.split("")[1].equalsIgnoreCase("b");
+        for (int i = newAPI ? 0 : 1; i <= (newAPI ? this.letters.length() - 1 : this.letters.length()); i++) {
             final Button button = findViewById(i);
             button.setAllCaps(this.mayus);
         }
     }
 
     private void rotationLayout() {
+        final ConstraintLayout layout = findViewById(R.id.root);
 
     }
 }
