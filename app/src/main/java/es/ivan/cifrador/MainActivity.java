@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final String letters = "abcdefghijklmnñopqrstuvwxyz";
     private boolean mayus = false;
     private boolean longClick = false;
-    private final int enDeMoves = 0;
+    private int enDeMoves = 0;
     private final Caesar caesar = new Caesar();
 
     @Override
@@ -187,17 +187,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Spinner
         final Spinner enDeMoves = new Spinner(this);
         enDeMoves.setId(Integer.valueOf(22100));
-        final ArrayAdapter<Integer> moveAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+        final ArrayAdapter<Integer> moveAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
         enDeMoves.setAdapter(moveAdapter);
+        enDeMoves.setSelection(1);
 
         enDeMoves.setOnItemSelectedListener(this);
 
         layout.addView(enDeMoves);
 
-        set.setTranslationX(enDeMoves.getId(), (metrics.widthPixels / 2) - 50);
-        set.setTranslationY(enDeMoves.getId(), (metrics.heightPixels / 2) - 50);
+        set.setTranslationX(enDeMoves.getId(), metrics.widthPixels - 5 - buttonSize * 3);
+        set.setTranslationY(enDeMoves.getId(), metrics.heightPixels - (buttonSize * 2 - 5));
         set.constrainHeight(enDeMoves.getId(), buttonSize);
-        set.constrainWidth(enDeMoves.getId(), 100);
+        set.constrainWidth(enDeMoves.getId(), buttonSize * 2);
         set.applyTo(layout);
     }
 
@@ -215,35 +216,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     v.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
                 }
                 this.mayus = !this.mayus;
-                if (this.mayus) {
-                    v.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
-                } else {
-                    v.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
-                }
+                v.getBackground().setColorFilter(this.mayus ? Color.RED : Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
                 this.updateLetterButton();
                 break;
             case 31:
                 if (noCifrado.getText().length() <= 0) {
-                    this.error("No puedes encriptar si no hay nada", 5);
+                    this.error("No puedes encriptar si no hay nada, cruck", 5);
                     break;
                 }
                 cifrado.setText(this.caesar.encrypt((String) noCifrado.getText(), this.enDeMoves));
                 break;
             case 32:
                 if (noCifrado.getText().length() <= 0) {
-                    this.error("No puedes desencriptar si no hay nada", 5);
+                    this.error("No puedes desencriptar si no hay nada, cruck", 5);
                     break;
                 }
                 cifrado.setText(this.caesar.decrypt((String) noCifrado.getText(), this.enDeMoves));
                 break;
             case 33:
                 if (noCifrado.getText().length() <= 0) {
-                    this.error("No puedes borrar si no hay nada", 5);
+                    this.error("No puedes borrar si no hay nada, cruck", 5);
                     break;
                 }
                 noCifrado.setText(String.valueOf(Arrays.copyOf(noCifrado.getText().toString().toCharArray(), noCifrado.getText().toString().toCharArray().length - 1)));
                 break;
             case 34:
+                // Sólo pone un espacio...
                 noCifrado.setText(noCifrado.getText() + " ");
                 break;
             default:
@@ -270,6 +268,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        this.enDeMoves = ((Spinner) findViewById(Integer.valueOf(22100))).getSelectedItemPosition();
+        System.out.println(this.enDeMoves);
     }
 
     @Override

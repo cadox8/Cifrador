@@ -49,7 +49,7 @@ public class Caesar {
 
         for (char c : text.toCharArray()) {
             if (c == ' ') {
-                // Si hay un espacio no queremos que lo encripte
+                // Si hay un espacio no queremos que lo desencripte
                 sb.append(' ');
                 continue;
             }
