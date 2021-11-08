@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import com.pranavpandey.android.dynamic.toasts.DynamicToast;
+
 import java.util.Arrays;
 
 import es.ivan.cifrador.utils.Caesar;
@@ -221,19 +223,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.updateLetterButton();
                 break;
             case 31:
+                if (noCifrado.getText().length() <= 0) {
+                    this.error("No puedes encriptar si no hay nada", 5);
+                    break;
+                }
                 cifrado.setText(this.caesar.encrypt((String) noCifrado.getText(), this.enDeMoves));
                 break;
             case 32:
+                if (noCifrado.getText().length() <= 0) {
+                    this.error("No puedes desencriptar si no hay nada", 5);
+                    break;
+                }
                 cifrado.setText(this.caesar.decrypt((String) noCifrado.getText(), this.enDeMoves));
                 break;
             case 33:
-                if (noCifrado.getText().toString().toCharArray().length <= 0) break;
+                if (noCifrado.getText().length() <= 0) {
+                    this.error("No puedes borrar si no hay nada", 5);
+                    break;
+                }
                 noCifrado.setText(String.valueOf(Arrays.copyOf(noCifrado.getText().toString().toCharArray(), noCifrado.getText().toString().toCharArray().length - 1)));
                 break;
             case 34:
                 noCifrado.setText(noCifrado.getText() + " ");
                 break;
             default:
+                if (noCifrado.getText().length() > 30) {
+                    this.error("No puedes poner más letras", 5);
+                    return;
+                }
+
                 String letter = letters.split("")[v.getId()];
                 if (this.mayus) letter = letter.toUpperCase();
                 noCifrado.setText(noCifrado.getText() + letter);
@@ -260,7 +278,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //
 
-
+    /**
+     * Método usado para actualizar las letras del teclado dependiendo si hay que ponerlas en mayusculas o no.
+     */
     private void updateLetterButton() {
         final boolean newAPI = letters.split("")[1].equalsIgnoreCase("b");
         for (int i = newAPI ? 0 : 1; i <= (newAPI ? this.letters.length() - 1 : this.letters.length()); i++) {
@@ -269,6 +289,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * El layout para cuando se rota la pantalla :peepoClap:
+     */
     private void rotationLayout() {
         final DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -282,10 +305,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.addView(gif);
 
-        set.setTranslationX(gif.getId(), (metrics.widthPixels / 2) - 110);
-        set.setTranslationY(gif.getId(), (metrics.heightPixels / 2) - 110);
-        set.constrainHeight(gif.getId(), 220);
-        set.constrainWidth(gif.getId(), 220);
+        set.setTranslationX(gif.getId(), (metrics.widthPixels / 2) - 300);
+        set.setTranslationY(gif.getId(), (metrics.heightPixels / 2) - 400);
+        set.constrainHeight(gif.getId(), 600);
+        set.constrainWidth(gif.getId(), 400);
         set.applyTo(layout);
 
         final TextView text = new TextView(this);
@@ -298,5 +321,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         set.constrainHeight(text.getId(), 220);
         set.constrainWidth(text.getId(), metrics.widthPixels);
         set.applyTo(layout);
+    }
+
+    /**
+     * Método para crear Toast con colores!
+     *
+     * Referencia: https://github.com/pranavpandey/dynamic-toasts
+     *
+     * @param text El texto a mostrar
+     * @param duration La duraciíon del mensaje
+     */
+    private void error(String text, int duration) {
+        DynamicToast.makeError(this, text, duration).show();
     }
 }
