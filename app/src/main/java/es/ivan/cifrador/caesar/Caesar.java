@@ -1,4 +1,4 @@
-package es.ivan.cifrador.utils;
+package es.ivan.cifrador.caesar;
 
 public class Caesar {
 

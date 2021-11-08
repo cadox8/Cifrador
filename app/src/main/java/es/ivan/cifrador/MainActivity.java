@@ -23,7 +23,7 @@ import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.util.Arrays;
 
-import es.ivan.cifrador.utils.Caesar;
+import es.ivan.cifrador.caesar.Caesar;
 import pl.droidsonroids.gif.GifImageView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener, Spinner.OnItemSelectedListener {
