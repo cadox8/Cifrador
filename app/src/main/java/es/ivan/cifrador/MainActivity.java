@@ -7,9 +7,12 @@ import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,12 +22,15 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import java.util.Arrays;
 
 import es.ivan.cifrador.utils.Caesar;
+import pl.droidsonroids.gif.GifImageView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener, Spinner.OnItemSelectedListener {
 
+    // Algunas variables útiles para la realización de la APP
     private final String letters = "abcdefghijklmnñopqrstuvwxyz";
     private boolean mayus = false;
     private boolean longClick = false;
+    private final int enDeMoves = 0;
     private final Caesar caesar = new Caesar();
 
     @Override
@@ -34,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final int orientation = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getRotation();
 
+        // Dependiendo de la orientación (girado) carga un layout u otro
         if (orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
             this.rotationLayout();
         } else {
@@ -41,6 +48,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Método interno para la creacción de los botones del cifrado
+     */
     private void normalLayout() {
         final DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -57,12 +67,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final ConstraintSet set = new ConstraintSet();
         set.clone(layout);
 
-        // A-Z
-        // i = 1 bc with i = 0 the A button will be alone
-        //
-        // [A]
-        // [B] [C] [D] ...
-        //
+        /*
+        A-Z
+        i = 1 / 0 porque la API de Android es muy fancy y dependiendo de la versión coge las letras en un slot u otro
+
+        'letters.split("")[1].equalsIgnoreCase("b")' sirve para comprobar cual es la letra que primero coge y así actuar en conveniencia.
+        API 21-22 = a
+        API 22-30 = b
+        */
         final boolean newAPI = letters.split("")[1].equalsIgnoreCase("b");
         for (int i = newAPI ? 0 : 1; i <= (newAPI ? this.letters.length() - 1 : this.letters.length()); i++) {
             final Button button = new Button(this);
@@ -80,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             set.constrainWidth(button.getId(), buttonSize);
             set.applyTo(layout);
 
+            /*
+            Simplemente se usa esto para saber donde tiene que ir cada botón dependiendo
+             */
             columns++;
             if ((newAPI ? i + 1 : i) % 5 == 0 && i != 0) {
                 rows++;
@@ -146,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.addView(encrypt);
 
-        set.setTranslationX(encrypt.getId(), xPos + 5);
+        set.setTranslationX(encrypt.getId(), 5);
         set.setTranslationY(encrypt.getId(), metrics.heightPixels - (buttonSize * 2 - 5));
         set.constrainHeight(encrypt.getId(), buttonSize);
         set.constrainWidth(encrypt.getId(), buttonSize * 2);
@@ -161,12 +176,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.addView(decrypt);
 
-        set.setTranslationX(decrypt.getId(), xPos + (3 * buttonSize + 5));
+        set.setTranslationX(decrypt.getId(), metrics.widthPixels - 5 - buttonSize * 2);
         set.setTranslationY(decrypt.getId(), metrics.heightPixels - (buttonSize * 2 - 5));
         set.constrainHeight(decrypt.getId(), buttonSize);
         set.constrainWidth(decrypt.getId(), buttonSize * 2);
         set.applyTo(layout);
+
+        // Spinner
+        final Spinner enDeMoves = new Spinner(this);
+        enDeMoves.setId(Integer.valueOf(22100));
+        final ArrayAdapter<Integer> moveAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+        enDeMoves.setAdapter(moveAdapter);
+
+        enDeMoves.setOnItemSelectedListener(this);
+
+        layout.addView(enDeMoves);
+
+        set.setTranslationX(enDeMoves.getId(), (metrics.widthPixels / 2) - 50);
+        set.setTranslationY(enDeMoves.getId(), (metrics.heightPixels / 2) - 50);
+        set.constrainHeight(enDeMoves.getId(), buttonSize);
+        set.constrainWidth(enDeMoves.getId(), 100);
+        set.applyTo(layout);
     }
+
+    // Import methods
 
     @Override
     public void onClick(View v) {
@@ -188,10 +221,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.updateLetterButton();
                 break;
             case 31:
-                cifrado.setText(this.caesar.encrypt((String) noCifrado.getText(), 4));
+                cifrado.setText(this.caesar.encrypt((String) noCifrado.getText(), this.enDeMoves));
                 break;
             case 32:
-                cifrado.setText(this.caesar.decrypt((String) noCifrado.getText(), 4));
+                cifrado.setText(this.caesar.decrypt((String) noCifrado.getText(), this.enDeMoves));
                 break;
             case 33:
                 if (noCifrado.getText().toString().toCharArray().length <= 0) break;
@@ -217,6 +250,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+    }
+
+    //
+
+
     private void updateLetterButton() {
         final boolean newAPI = letters.split("")[1].equalsIgnoreCase("b");
         for (int i = newAPI ? 0 : 1; i <= (newAPI ? this.letters.length() - 1 : this.letters.length()); i++) {
@@ -226,7 +270,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void rotationLayout() {
+        final DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
         final ConstraintLayout layout = findViewById(R.id.root);
+        final ConstraintSet set = new ConstraintSet();
+        set.clone(layout);
 
+        final GifImageView gif = new GifImageView(this);
+        gif.setImageResource(R.drawable.nope);
+        gif.setId(Integer.valueOf(55100));
+
+        layout.addView(gif);
+
+        set.setTranslationX(gif.getId(), (metrics.widthPixels / 2) - 110);
+        set.setTranslationY(gif.getId(), (metrics.heightPixels / 2) - 110);
+        set.constrainHeight(gif.getId(), 220);
+        set.constrainWidth(gif.getId(), 220);
+        set.applyTo(layout);
+
+        final TextView text = new TextView(this);
+        text.setId(Integer.valueOf(55101));
+        text.setText("Hola Juan, no me gusta esta vista :c");
+        layout.addView(text);
+
+        set.setTranslationX(text.getId(), (metrics.widthPixels / 2) - 220);
+        set.setTranslationY(text.getId(), (metrics.heightPixels / 2) + 150);
+        set.constrainHeight(text.getId(), 220);
+        set.constrainWidth(text.getId(), metrics.widthPixels);
+        set.applyTo(layout);
     }
 }
