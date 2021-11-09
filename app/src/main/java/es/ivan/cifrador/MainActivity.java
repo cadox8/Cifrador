@@ -211,45 +211,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (v.getId()) {
             case 30:
+                // Comprobamos si el long click está activado, en cuyo caso lo desactivamos y volvemos a su color original
                 if (this.longClick) {
                     this.longClick = false;
                     v.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
                 }
+                // Cambiamos el estado de las mayusculas, el color y actualizamos las letras visualmente
                 this.mayus = !this.mayus;
                 v.getBackground().setColorFilter(this.mayus ? Color.RED : Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
                 this.updateLetterButton();
                 break;
             case 31:
+                // Comprobamos que tenga texto para encriptar
                 if (noCifrado.getText().length() <= 0) {
                     this.error("No puedes encriptar si no hay nada, cruck", 5);
                     break;
                 }
+                // Encriptamos cogiendo el texto del TextView y los movimientos
                 cifrado.setText(this.caesar.encrypt((String) noCifrado.getText(), this.enDeMoves));
                 break;
             case 32:
+                // Comprobamos que tenga texto para desencriptar
                 if (noCifrado.getText().length() <= 0) {
                     this.error("No puedes desencriptar si no hay nada, cruck", 5);
                     break;
                 }
+                // Desencriptamos cogiendo el texto del TextView y los movimientos
                 cifrado.setText(this.caesar.decrypt((String) noCifrado.getText(), this.enDeMoves));
                 break;
             case 33:
+                // Comprobamos que tenga texto para borrar
                 if (noCifrado.getText().length() <= 0) {
                     this.error("No puedes borrar si no hay nada, cruck", 5);
                     break;
                 }
-                noCifrado.setText(String.valueOf(Arrays.copyOf(noCifrado.getText().toString().toCharArray(), noCifrado.getText().toString().toCharArray().length - 1)));
+                // Borramos el último caracter del contenido del texto. Para ello creamos una copia del texto (en array) pero quitando el último valor
+                final char[] textToChar = noCifrado.getText().toString().toCharArray();
+                noCifrado.setText(String.valueOf(Arrays.copyOf(textToChar, textToChar.length - 1)));
                 break;
             case 34:
                 // Sólo pone un espacio...
                 noCifrado.setText(noCifrado.getText() + " ");
                 break;
             default:
+                // Comprobamos que la cantidad de las letras no sea mayor que 30
                 if (noCifrado.getText().length() > 30) {
                     this.error("No puedes poner más letras", 5);
                     return;
                 }
 
+                // Cogemos la letra dependiendo de la Id del boton que estamos clickando, comprobamos si tiene que estar mayúscula y la añadimos
                 String letter = letters.split("")[v.getId()];
                 if (this.mayus) letter = letter.toUpperCase();
                 noCifrado.setText(noCifrado.getText() + letter);
@@ -259,17 +270,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
-        this.mayus = true;
-        this.longClick = true;
+        // Activamos las mayusculas, actualizamos el color y actualizamos visualmente las letras de los botones
+        this.mayus = !this.mayus;
+        this.longClick = !this.longClick;
         this.updateLetterButton();
-        v.getBackground().setColorFilter(Color.MAGENTA, PorterDuff.Mode.SRC_ATOP);
+        v.getBackground().setColorFilter(this.longClick ? Color.MAGENTA : Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
         return true;
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        // Obtenemos la cantidad de movimientos para cifrar/descifrar del spinner
         this.enDeMoves = ((Spinner) findViewById(Integer.valueOf(22100))).getSelectedItemPosition();
-        System.out.println(this.enDeMoves);
     }
 
     @Override
@@ -284,8 +296,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void updateLetterButton() {
         final boolean newAPI = letters.split("")[1].equalsIgnoreCase("b");
         for (int i = newAPI ? 0 : 1; i <= (newAPI ? this.letters.length() - 1 : this.letters.length()); i++) {
-            final Button button = findViewById(i);
-            button.setAllCaps(this.mayus);
+            ((Button)findViewById(i)).setAllCaps(this.mayus);
         }
     }
 
